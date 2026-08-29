@@ -3,457 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#5b5bd6">
   <title>Professor Math</title>
-
   <link rel="stylesheet" href="./style.css">
 </head>
-
 <body>
-
   <div class="app">
-
     <header class="header">
-
       <div class="brand">
         <div class="brand-icon">🧮</div>
-
         <div>
           <h1>Professor Math</h1>
           <p>Aprender matemática pode ser divertido!</p>
         </div>
       </div>
-
-      <button id="soundBtn" class="sound-btn" type="button">
-        🔊
-      </button>
-
+      <button id="soundBtn" class="sound-btn" type="button" aria-label="Ativar ou desativar voz">🔊</button>
     </header>
 
-
-    <!-- MENU -->
-
-    <section id="home" class="screen">
-
-      <div class="welcome">
-
-        <div class="teacher teacher-large">
-          🧑‍🏫
-        </div>
-
-        <div class="bubble">
-
-          <div class="bubble-title">
-            Olá! Eu sou o Professor Math 👋
+    <main>
+      <section id="home" class="screen">
+        <div class="welcome">
+          <div class="teacher teacher-large">🧑‍🏫</div>
+          <div class="bubble">
+            <div class="bubble-title">Olá! Eu sou o Professor Math 👋</div>
+            <p>Vou ensinar você a pensar para resolver contas de matemática.</p>
+            <p>Primeiro aprendemos juntos. Depois praticamos!</p>
           </div>
-
-          <p>
-            Eu vou ensinar você a pensar para resolver
-            contas de matemática.
-          </p>
-
-          <p>
-            Primeiro vamos aprender juntos.
-            Depois você poderá praticar!
-          </p>
-
         </div>
 
-      </div>
-
-
-      <div class="section-title">
-        <span>📚</span>
-        <h2>Escolha uma aula</h2>
-      </div>
-
-
-      <div class="lesson-grid">
-
-        <button
-          id="additionBtn"
-          class="lesson-card addition-card"
-          type="button">
-
-          <div class="lesson-icon">➕</div>
-
-          <h3>Adição</h3>
-
-          <p>
-            Aprenda a juntar quantidades
-            e descobrir o total.
-          </p>
-
-          <span class="start-label">
-            Começar aula →
-          </span>
-
-        </button>
-
-
-        <button
-          id="subtractionBtn"
-          class="lesson-card subtraction-card"
-          type="button">
-
-          <div class="lesson-icon">➖</div>
-
-          <h3>Subtração</h3>
-
-          <p>
-            Aprenda a tirar uma quantidade
-            de outra.
-          </p>
-
-          <span class="start-label">
-            Começar aula →
-          </span>
-
-        </button>
-
-      </div>
-
-
-      <div class="how-box">
-
-        <div class="how-icon">💡</div>
-
-        <div>
-          <strong>Como funciona?</strong>
-
-          <p>
-            O professor explica, mostra exemplos,
-            faz perguntas e ajuda quando você erra.
-          </p>
+        <div class="section-title">
+          <span>📚</span>
+          <h2>Escolha uma aula</h2>
         </div>
 
-      </div>
-
-    </section>
-
-
-    <!-- AULA -->
-
-    <section id="lesson" class="screen hidden">
-
-      <div class="top-navigation">
-
-        <button
-          id="lessonBackBtn"
-          class="back-btn"
-          type="button">
-          ← Voltar
-        </button>
-
-        <div class="lesson-progress">
-          Aula <span id="lessonStep">1</span> de 4
-        </div>
-
-      </div>
-
-
-      <div class="teacher-area">
-
-        <div class="teacher">
-          🧑‍🏫
-        </div>
-
-        <div class="bubble">
-
-          <div
-            id="lessonTitle"
-            class="bubble-title">
-            Vamos aprender!
-          </div>
-
-          <p id="lessonText">
-            Prepare-se para aprender.
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div id="lessonContent" class="lesson-content"></div>
-
-
-      <button
-        id="lessonNextBtn"
-        class="primary-btn"
-        type="button">
-
-        Continuar →
-
-      </button>
-
-    </section>
-
-
-    <!-- PRÁTICA -->
-
-    <section id="practice" class="screen hidden">
-
-      <div class="practice-header">
-
-        <button
-          id="practiceBackBtn"
-          class="back-btn"
-          type="button">
-
-          ← Sair
-
-        </button>
-
-        <div class="score-box">
-          ⭐ <span id="score">0</span>
-        </div>
-
-      </div>
-
-
-      <div class="teacher-area compact">
-
-        <div class="teacher">
-          🧑‍🏫
-        </div>
-
-        <div class="bubble">
-
-          <div class="bubble-title">
-            <span id="practiceGreeting">
-              Agora é sua vez!
-            </span>
-          </div>
-
-          <p id="practiceMessage">
-            Pense com calma. Eu estou aqui para ajudar.
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div class="progress-bar-container">
-
-        <div class="progress-label">
-
-          <span>
-            Questão
-            <strong id="questionNumber">1</strong>
-            de 10
-          </span>
-
-          <span>
-            🔥 <strong id="streak">0</strong>
-          </span>
-
-        </div>
-
-        <div class="progress-bar">
-          <div id="progress" class="progress"></div>
-        </div>
-
-      </div>
-
-
-      <div class="question-card">
-
-        <div
-          id="operationLabel"
-          class="operation-label">
-          ADIÇÃO
-        </div>
-
-        <div
-          id="question"
-          class="big-question">
-          2 + 3 = ?
-        </div>
-
-
-        <div
-          id="visualArea"
-          class="visual-area">
-        </div>
-
-
-        <p class="answer-label">
-          Qual é a resposta?
-        </p>
-
-
-        <input
-          id="answer"
-          type="number"
-          inputmode="numeric"
-          autocomplete="off"
-          placeholder="Digite aqui">
-
-
-        <button
-          id="answerBtn"
-          class="primary-btn answer-btn"
-          type="button">
-
-          Verificar resposta ✓
-
-        </button>
-
-
-        <div class="help-buttons">
-
-          <button
-            id="hintBtn"
-            type="button">
-
-            💡 Me dê uma dica
-
+        <div class="lesson-grid">
+          <button id="additionBtn" class="lesson-card addition-card" type="button">
+            <div class="lesson-icon">➕</div>
+            <h3>Adição</h3>
+            <p>Aprenda a juntar quantidades e descobrir o total.</p>
+            <span class="start-label">Começar aula →</span>
           </button>
 
-          <button
-            id="explainBtn"
-            type="button">
-
-            🧑‍🏫 Explique
-
+          <button id="subtractionBtn" class="lesson-card subtraction-card" type="button">
+            <div class="lesson-icon">➖</div>
+            <h3>Subtração</h3>
+            <p>Aprenda a tirar uma quantidade de outra.</p>
+            <span class="start-label">Começar aula →</span>
           </button>
-
         </div>
 
-      </div>
-
-
-      <div
-        id="feedback"
-        class="feedback hidden">
-
-        <div
-          id="feedbackIcon"
-          class="feedback-icon">
-          💡
-        </div>
-
-        <div>
-
-          <h3 id="feedbackTitle">
-            Vamos pensar juntos
-          </h3>
-
-          <div id="feedbackText"></div>
-
-        </div>
-
-      </div>
-
-
-      <div class="stats">
-
-        <div>
-          <strong id="correct">0</strong>
-          <span>Acertos</span>
-        </div>
-
-        <div>
-          <strong id="wrong">0</strong>
-          <span>Tentativas</span>
-        </div>
-
-        <div>
-          <strong id="accuracy">0%</strong>
-          <span>Precisão</span>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- RESULTADO -->
-
-    <section id="result" class="screen hidden">
-
-      <div class="result-card">
-
-        <div
-          id="resultEmoji"
-          class="result-emoji">
-          🏆
-        </div>
-
-        <h2 id="resultTitle">
-          Muito bem!
-        </h2>
-
-        <p id="resultText">
-          Você terminou a atividade.
-        </p>
-
-
-        <div class="final-score">
-          ⭐ <span id="finalScore">0</span> pontos
-        </div>
-
-
-        <div class="result-grid">
-
+        <div class="how-box">
+          <div class="how-icon">💡</div>
           <div>
-            <strong id="finalCorrect">0</strong>
-            <span>Acertos</span>
+            <strong>Como funciona?</strong>
+            <p>O professor explica, mostra exemplos e ajuda quando você precisa.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="lesson" class="screen hidden">
+        <div class="top-navigation">
+          <button id="lessonBackBtn" class="back-btn" type="button">← Voltar</button>
+          <div class="lesson-progress">Aula <span id="lessonStep">1</span> de 4</div>
+        </div>
+
+        <div class="teacher-area">
+          <div class="teacher">🧑‍🏫</div>
+          <div class="bubble">
+            <div id="lessonTitle" class="bubble-title">Vamos aprender!</div>
+            <p id="lessonText">Prepare-se para aprender.</p>
+          </div>
+        </div>
+
+        <div id="lessonContent" class="lesson-content"></div>
+        <button id="lessonNextBtn" class="primary-btn" type="button">Continuar →</button>
+      </section>
+
+      <section id="practice" class="screen hidden">
+        <div class="practice-header">
+          <button id="practiceBackBtn" class="back-btn" type="button">← Sair</button>
+          <div class="score-box">⭐ <span id="score">0</span></div>
+        </div>
+
+        <div class="teacher-area compact">
+          <div class="teacher">🧑‍🏫</div>
+          <div class="bubble">
+            <div class="bubble-title">Agora é sua vez!</div>
+            <p id="practiceMessage">Pense com calma. Eu estou aqui para ajudar.</p>
+          </div>
+        </div>
+
+        <div class="progress-bar-container">
+          <div class="progress-label">
+            <span>Questão <strong id="questionNumber">1</strong> de 10</span>
+            <span>🔥 <strong id="streak">0</strong></span>
+          </div>
+          <div class="progress-bar"><div id="progress" class="progress"></div></div>
+        </div>
+
+        <div class="question-card">
+          <div id="operationLabel" class="operation-label">ADIÇÃO</div>
+          <div id="question" class="big-question">2 + 3 = ?</div>
+          <div id="visualArea" class="visual-area"></div>
+
+          <p class="answer-label">Qual é a resposta?</p>
+          <input id="answer" type="number" inputmode="numeric" autocomplete="off" placeholder="Digite aqui">
+
+          <button id="answerBtn" class="primary-btn answer-btn" type="button">Verificar resposta ✓</button>
+
+          <div class="help-buttons">
+            <button id="hintBtn" type="button">💡 Me dê uma dica</button>
+            <button id="explainBtn" type="button">🧑‍🏫 Explique</button>
+          </div>
+        </div>
+
+        <div id="feedback" class="feedback hidden">
+          <div id="feedbackIcon" class="feedback-icon">💡</div>
+          <div>
+            <h3 id="feedbackTitle">Vamos pensar juntos</h3>
+            <div id="feedbackText"></div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div><strong id="correct">0</strong><span>Acertos</span></div>
+          <div><strong id="wrong">0</strong><span>Erros</span></div>
+          <div><strong id="accuracy">0%</strong><span>Precisão</span></div>
+        </div>
+      </section>
+
+      <section id="result" class="screen hidden">
+        <div class="result-card">
+          <div id="resultEmoji" class="result-emoji">🏆</div>
+          <h2 id="resultTitle">Muito bem!</h2>
+          <p id="resultText">Você terminou a atividade.</p>
+
+          <div class="final-score">⭐ <span id="finalScore">0</span> pontos</div>
+
+          <div class="result-grid">
+            <div><strong id="finalCorrect">0</strong><span>Acertos</span></div>
+            <div><strong id="finalWrong">0</strong><span>Erros</span></div>
+            <div><strong id="finalAccuracy">0%</strong><span>Precisão</span></div>
           </div>
 
-          <div>
-            <strong id="finalWrong">0</strong>
-            <span>Tentativas</span>
-          </div>
+          <div id="resultMessage" class="result-message"></div>
 
-          <div>
-            <strong id="finalAccuracy">0%</strong>
-            <span>Precisão</span>
-          </div>
-
+          <button id="restartBtn" class="primary-btn" type="button">🔄 Praticar novamente</button>
+          <button id="homeBtn" class="secondary-btn" type="button">🏠 Escolher outra aula</button>
         </div>
-
-
-        <div
-          class="result-message"
-          id="resultMessage">
-        </div>
-
-
-        <button
-          id="restartBtn"
-          class="primary-btn"
-          type="button">
-
-          🔄 Praticar novamente
-
-        </button>
-
-
-        <button
-          id="homeBtn"
-          class="secondary-btn"
-          type="button">
-
-          🏠 Escolher outra aula
-
-        </button>
-
-      </div>
-
-    </section>
-
+      </section>
+    </main>
   </div>
 
-
-  <footer>
-    Professor Math • Feito para aprender brincando 📚
-  </footer>
-
-
-  <!-- IMPORTANTE: carregar o JS por último -->
+  <footer>Professor Math • Feito para aprender brincando 📚</footer>
   <script src="./script.js"></script>
-
 </body>
 </html>
