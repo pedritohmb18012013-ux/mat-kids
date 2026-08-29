@@ -1,3 +1,4 @@
+Fechado. Aqui está o script.js completo, já com a professora falando de um jeito mais casual e natural nas duas operações, sem remover as funções que você já tinha.
 /* Professor Math - aula visual para crianças que ainda não sabem ler */
 "use strict";
 
@@ -33,6 +34,15 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  /*
+   * =====================================================
+   * VOZ DA PROFESSORA
+   * =====================================================
+   *
+   * A fala foi deixada mais natural e casual,
+   * como uma professora explicando em casa.
+   */
+
   function speak(text) {
     if (!soundEnabled || !("speechSynthesis" in window)) return;
 
@@ -64,7 +74,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!soundEnabled) {
       stopSpeech();
     } else {
-      speak("A voz do Professor Math está ativada.");
+      speak(
+        "Pronto! Minha voz voltou. Bora continuar?"
+      );
     }
   }
 
@@ -101,11 +113,6 @@ document.addEventListener("DOMContentLoaded", function () {
    * =====================================================
    * AULA
    * =====================================================
-   *
-   * A aula foi feita para depender o mínimo possível
-   * de leitura.
-   *
-   * A criança vê objetos grandes e o professor fala.
    */
 
   function renderLesson() {
@@ -145,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
       title.textContent = "➕ JUNTAR";
 
       text.textContent =
-        "Olhe as maçãs. Vamos juntar.";
+        "Vamos juntar umas coisas aqui.";
 
       content.innerHTML = `
         <div style="
@@ -207,13 +214,13 @@ document.addEventListener("DOMContentLoaded", function () {
       next.textContent = "Continuar →";
 
       speak(
-        "Vamos aprender adição. " +
-        "Adição é juntar. " +
-        "Veja. Temos três maçãs. " +
-        "Agora chegam mais duas maçãs. " +
-        "Vamos juntar tudo. " +
+        "Bora começar! " +
+        "Adição é quando a gente junta as coisas. " +
+        "Olha aqui: tem três maçãs. " +
+        "Aí chegaram mais duas. " +
+        "Então bora juntar tudo. " +
         "Uma, duas, três, quatro, cinco. " +
-        "Temos cinco maçãs."
+        "Pronto! Ficaram cinco maçãs."
       );
 
       return;
@@ -229,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
       title.textContent = "➕ VAMOS CONTAR";
 
       text.textContent =
-        "Comece no 5 e conte mais 3.";
+        "Olha o 5. Agora vamos andar mais 3.";
 
       content.innerHTML = `
         <div style="
@@ -277,12 +284,13 @@ document.addEventListener("DOMContentLoaded", function () {
       next.textContent = "Continuar →";
 
       speak(
-        "Agora vamos contar. " +
-        "Começamos no cinco. " +
-        "Mais um: seis. " +
+        "Agora olha só. " +
+        "A gente começa no cinco. " +
+        "Aí vai mais um: seis. " +
         "Mais um: sete. " +
         "Mais um: oito. " +
-        "Então cinco mais três é oito."
+        "Viu? Então cinco mais três dá oito. " +
+        "Facinho!"
       );
 
       return;
@@ -297,7 +305,7 @@ document.addEventListener("DOMContentLoaded", function () {
     title.textContent = "🧠 AGORA VOCÊ VÊ";
 
     text.textContent =
-      "Vamos juntar as estrelas.";
+      "Vamos fazer essa juntos.";
 
     content.innerHTML = `
       <div style="
@@ -366,12 +374,13 @@ document.addEventListener("DOMContentLoaded", function () {
     next.textContent = "Continuar →";
 
     speak(
-      "Agora vamos pensar juntos. " +
-      "Temos quatro estrelas. " +
-      "Chegam mais três estrelas. " +
-      "Começamos no quatro. " +
-      "Cinco, seis, sete. " +
-      "A resposta é sete."
+      "Agora é com a gente. " +
+      "Tem quatro estrelas e chegam mais três. " +
+      "Começa no quatro. " +
+      "Mais um: cinco. " +
+      "Mais um: seis. " +
+      "Mais um: sete. " +
+      "Boa! A resposta é sete."
     );
   }
 
@@ -386,7 +395,7 @@ document.addEventListener("DOMContentLoaded", function () {
       title.textContent = "➖ TIRAR";
 
       text.textContent =
-        "Olhe as maçãs. Vamos tirar.";
+        "Agora vamos tirar algumas.";
 
       content.innerHTML = `
         <div style="
@@ -448,13 +457,14 @@ document.addEventListener("DOMContentLoaded", function () {
       next.textContent = "Continuar →";
 
       speak(
-        "Vamos aprender subtração. " +
-        "Subtração é tirar. " +
-        "Temos cinco maçãs. " +
-        "Vamos tirar duas maçãs. " +
-        "Tiramos uma. " +
-        "Tiramos outra. " +
-        "Agora sobraram três maçãs."
+        "Agora vamos de subtração. " +
+        "Subtração é quando a gente tira. " +
+        "Olha: temos cinco maçãs. " +
+        "Vamos tirar duas. " +
+        "Tira uma... " +
+        "tira mais uma... " +
+        "Pronto! Sobraram três. " +
+        "É isso!"
       );
 
       return;
@@ -470,7 +480,7 @@ document.addEventListener("DOMContentLoaded", function () {
       title.textContent = "➖ VAMOS VOLTAR";
 
       text.textContent =
-        "Comece no 8 e volte 3.";
+        "Começa no 8 e vamos voltar 3.";
 
       content.innerHTML = `
         <div style="
@@ -518,12 +528,12 @@ document.addEventListener("DOMContentLoaded", function () {
       next.textContent = "Continuar →";
 
       speak(
-        "Agora vamos fazer uma subtração. " +
-        "Começamos no oito. " +
-        "Voltamos um: sete. " +
-        "Voltamos um: seis. " +
-        "Voltamos um: cinco. " +
-        "Então oito menos três é cinco."
+        "Olha só. " +
+        "A gente começa no oito e vai voltando. " +
+        "Volta um: sete. " +
+        "Volta outro: seis. " +
+        "E volta mais um: cinco. " +
+        "Pronto! Oito menos três dá cinco."
       );
 
       return;
@@ -538,7 +548,7 @@ document.addEventListener("DOMContentLoaded", function () {
     title.textContent = "🧠 AGORA VOCÊ VÊ";
 
     text.textContent =
-      "Vamos tirar os balões.";
+      "Bora fazer essa juntos.";
 
     content.innerHTML = `
       <div style="
@@ -608,14 +618,13 @@ document.addEventListener("DOMContentLoaded", function () {
     next.textContent = "Continuar →";
 
     speak(
-      "Agora vamos pensar juntos. " +
-      "Temos sete balões. " +
-      "Três balões vão embora. " +
-      "Começamos no sete. " +
-      "Voltamos um: seis. " +
-      "Voltamos um: cinco. " +
-      "Voltamos um: quatro. " +
-      "A resposta é quatro."
+      "Bora nessa. " +
+      "Temos sete balões e vamos tirar três. " +
+      "Começa no sete. " +
+      "Volta um: seis. " +
+      "Volta mais um: cinco. " +
+      "E mais um: quatro. " +
+      "Boa! Sete menos três é quatro."
     );
   }
 
@@ -641,7 +650,7 @@ document.addEventListener("DOMContentLoaded", function () {
     title.textContent = "🚀 AGORA É SUA VEZ!";
 
     text.textContent =
-      "Vamos fazer contas juntos.";
+      "Bora tentar umas continhas?";
 
     content.innerHTML = `
       <div style="
@@ -699,11 +708,10 @@ document.addEventListener("DOMContentLoaded", function () {
     next.textContent = "Começar exercícios 🎯";
 
     speak(
-      "Você está pronto! " +
-      "Agora é sua vez. " +
-      "Olhe a conta. " +
-      "Pense com calma. " +
-      "Se precisar, eu posso dar uma dica. " +
+      "Pronto! Agora é sua vez. " +
+      "Bora fazer umas continhas? " +
+      "Olha com calma, pensa um pouquinho e tenta. " +
+      "E se travar, relaxa. Eu te ajudo. " +
       "Vamos começar!"
     );
   }
@@ -758,11 +766,6 @@ document.addEventListener("DOMContentLoaded", function () {
     questionNumber++;
     hintLevel = 0;
 
-    /*
-     * Para uma criança pequena, começamos
-     * com números pequenos.
-     */
-
     let max;
 
     if (correct < 3) {
@@ -815,21 +818,21 @@ document.addEventListener("DOMContentLoaded", function () {
     if (message) {
       message.textContent =
         operation === "addition"
-          ? "➕ Vamos juntar!"
-          : "➖ Vamos tirar!";
+          ? "➕ Bora juntar!"
+          : "➖ Bora tirar!";
     }
 
     if (operation === "addition") {
       speak(
-        `Vamos fazer uma conta. ` +
+        `Bora pra próxima! ` +
         `${number1} mais ${number2}. ` +
-        `Pense e tente responder.`
+        `Pensa com calma e manda a resposta.`
       );
     } else {
       speak(
-        `Vamos fazer uma conta. ` +
+        `Vamos nessa! ` +
         `${number1} menos ${number2}. ` +
-        `Pense e tente responder.`
+        `Pensa um pouquinho e manda a resposta.`
       );
     }
   }
@@ -885,10 +888,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     area.innerHTML = "";
 
-    /*
-     * Mostra os objetos quando os números são pequenos.
-     */
-
     if (
       number1 <= 10 &&
       number2 <= 10
@@ -943,11 +942,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         area.appendChild(item);
       }
-
-      /*
-       * Na subtração mostramos também
-       * visualmente o que será retirado.
-       */
 
       if (operation === "subtraction") {
         const explanation =
@@ -1131,14 +1125,14 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
 
             <p>
-              Coloque um número.
+              Coloca um número aí.
             </p>
           </div>
         `
       );
 
       speak(
-        "Coloque um número para responder."
+        "Coloca um número aí e tenta."
       );
 
       input.focus();
@@ -1216,13 +1210,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (message) {
       message.textContent =
         streak >= 3
-          ? "🔥 Você está arrasando!"
-          : "👏 Muito bem!";
+          ? "🔥 Tá mandando bem demais!"
+          : "👏 Boa! Acertou!";
     }
 
     speak(
-      `Muito bem! Você acertou. ` +
-      `A resposta é ${correctAnswer}.`
+      streak >= 3
+        ? `Aí sim! Você acertou de novo! Tá mandando muito bem! A resposta é ${correctAnswer}.`
+        : `Boa! Acertou! A resposta é ${correctAnswer}.`
     );
 
     updateStats();
@@ -1280,7 +1275,7 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
 
           <p>
-            Vamos fazer devagar.
+            Relaxa, acontece. Vamos fazer juntos.
           </p>
 
           ${steps}
@@ -1305,23 +1300,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (message) {
       message.textContent =
-        "💪 Não tem problema. Vamos aprender!";
+        "💪 Relaxa! Vamos aprender juntos.";
     }
 
     if (operation === "addition") {
       speak(
-        `Não tem problema. ` +
-        `Vamos juntos. ` +
-        `Comece no ${number1}. ` +
-        `Conte mais ${number2}. ` +
+        `Relaxa, não tem problema. ` +
+        `Vamos fazer juntos. ` +
+        `Começa no ${number1}. ` +
+        `Agora conta mais ${number2}. ` +
         `A resposta é ${correctAnswer}.`
       );
     } else {
       speak(
-        `Não tem problema. ` +
-        `Vamos juntos. ` +
-        `Comece no ${number1}. ` +
-        `Volte ${number2} números. ` +
+        `Relaxa, não tem problema. ` +
+        `Vamos fazer juntos. ` +
+        `Começa no ${number1}. ` +
+        `Agora volta ${number2} números. ` +
         `A resposta é ${correctAnswer}.`
       );
     }
@@ -1375,7 +1370,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
 
             <p>
-              Vamos <strong>juntar</strong>.
+              Bora <strong>juntar</strong>.
             </p>
 
             <div style="
@@ -1428,7 +1423,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
 
             <p>
-              Conte comigo:
+              Vem comigo:
             </p>
 
             <div style="
@@ -1444,8 +1439,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       speak(
         `É uma adição. ` +
-        `Vamos juntar. ` +
-        `Comece no ${number1} e conte mais ${number2}.`
+        `Então bora juntar. ` +
+        `Começa no ${number1} e conta mais ${number2}.`
       );
     } else {
       if (hintLevel === 1) {
@@ -1462,7 +1457,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
 
             <p>
-              Vamos <strong>tirar</strong>.
+              Bora <strong>tirar</strong>.
             </p>
 
             <div style="
@@ -1515,7 +1510,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
 
             <p>
-              Conte para trás:
+              Vamos voltar:
             </p>
 
             <div style="
@@ -1532,7 +1527,7 @@ document.addEventListener("DOMContentLoaded", function () {
       speak(
         `É uma subtração. ` +
         `Vamos tirar. ` +
-        `Comece no ${number1} e conte para trás ${number2}.`
+        `Começa no ${number1} e volta ${number2}.`
       );
     }
 
@@ -1623,19 +1618,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (operation === "addition") {
       speak(
-        `Vamos resolver. ` +
-        `Na adição nós juntamos. ` +
-        `Começamos no ${number1}. ` +
-        `Contamos mais ${number2}. ` +
-        `A resposta é ${correctAnswer}.`
+        `Bora resolver juntos. ` +
+        `Na adição a gente junta. ` +
+        `Começa no ${number1}. ` +
+        `Conta mais ${number2}. ` +
+        `E chegamos no ${correctAnswer}.`
       );
     } else {
       speak(
-        `Vamos resolver. ` +
-        `Na subtração nós tiramos. ` +
-        `Começamos no ${number1}. ` +
-        `Voltamos ${number2}. ` +
-        `A resposta é ${correctAnswer}.`
+        `Bora resolver juntos. ` +
+        `Na subtração a gente tira. ` +
+        `Começa no ${number1}. ` +
+        `Volta ${number2}. ` +
+        `E chegamos no ${correctAnswer}.`
       );
     }
   }
@@ -1786,9 +1781,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     speak(
-      `Você terminou! ` +
-      `Acertou ${correct} de ${TOTAL_QUESTIONS}. ` +
-      `Muito bem!`
+      `E aí! Terminamos! ` +
+      `Você acertou ${correct} de ${TOTAL_QUESTIONS}. ` +
+      `Mandou bem por ter chegado até aqui!`
     );
   }
 
