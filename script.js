@@ -3,8 +3,10 @@
 document.addEventListener("DOMContentLoaded", function () {
 
   /* =========================================
-     ESTADO
+     CONFIGURAÇÕES
   ========================================= */
+
+  const TOTAL_QUESTIONS = 10;
 
   let operation = "addition";
 
@@ -15,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let correctAnswer = 0;
 
   let questionNumber = 0;
-
   let correct = 0;
   let wrong = 0;
 
@@ -23,42 +24,54 @@ document.addEventListener("DOMContentLoaded", function () {
   let streak = 0;
 
   let hintLevel = 0;
-
   let soundEnabled = true;
-
-  const TOTAL_QUESTIONS = 10;
 
 
   /* =========================================
      ELEMENTOS
   ========================================= */
 
-  const home =
-    document.getElementById("home");
+  const home = document.getElementById("home");
+  const lesson = document.getElementById("lesson");
+  const practice = document.getElementById("practice");
+  const result = document.getElementById("result");
 
-  const lesson =
-    document.getElementById("lesson");
+  const additionBtn = document.getElementById("additionBtn");
+  const subtractionBtn = document.getElementById("subtractionBtn");
+  const soundBtn = document.getElementById("soundBtn");
 
-  const practice =
-    document.getElementById("practice");
+  const lessonBackBtn = document.getElementById("lessonBackBtn");
+  const lessonNextBtn = document.getElementById("lessonNextBtn");
 
-  const result =
-    document.getElementById("result");
+  const practiceBackBtn = document.getElementById("practiceBackBtn");
+  const answerBtn = document.getElementById("answerBtn");
+
+  const hintBtn = document.getElementById("hintBtn");
+  const explainBtn = document.getElementById("explainBtn");
+
+  const restartBtn = document.getElementById("restartBtn");
+  const homeBtn = document.getElementById("homeBtn");
+
+  const answerInput = document.getElementById("answer");
 
 
   /* =========================================
-     VERIFICAR ELEMENTOS
+     VERIFICAÇÃO
   ========================================= */
 
   if (
     !home ||
     !lesson ||
     !practice ||
-    !result
+    !result ||
+    !additionBtn ||
+    !subtractionBtn ||
+    !lessonNextBtn ||
+    !answerBtn
   ) {
 
     console.error(
-      "Professor Math: elementos principais não encontrados."
+      "Professor Math: algum elemento do HTML não foi encontrado."
     );
 
     return;
@@ -71,7 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function speak(text) {
 
-    if (!soundEnabled) return;
+    if (!soundEnabled) {
+      return;
+    }
 
     if (!("speechSynthesis" in window)) {
       return;
@@ -79,11 +94,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.speechSynthesis.cancel();
 
-    const voice =
-      new SpeechSynthesisUtterance(text);
+    const voice = new SpeechSynthesisUtterance(text);
 
     voice.lang = "pt-BR";
-    voice.rate = 0.88;
+    voice.rate = 0.9;
     voice.pitch = 1.05;
     voice.volume = 1;
 
@@ -95,22 +109,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     soundEnabled = !soundEnabled;
 
-    const button =
-      document.getElementById("soundBtn");
-
     if (soundEnabled) {
 
-      button.textContent = "🔊";
+      if (soundBtn) {
+        soundBtn.textContent = "🔊";
+      }
 
-      speak(
-        "A voz está ativada."
-      );
+      speak("A voz está ativada.");
 
     } else {
 
-      button.textContent = "🔇";
+      if (soundBtn) {
+        soundBtn.textContent = "🔇";
+      }
 
-      window.speechSynthesis.cancel();
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
     }
   }
 
@@ -119,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
      TELAS
   ========================================= */
 
-  function hideScreens() {
+  function hideAllScreens() {
 
     home.classList.add("hidden");
     lesson.classList.add("hidden");
@@ -128,29 +143,29 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  function goHome() {
+  function showHome() {
+
+    hideAllScreens();
+
+    home.classList.remove("hidden");
 
     if ("speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
-
-    hideScreens();
-
-    home.classList.remove("hidden");
   }
 
 
   /* =========================================
-     ESCOLHER OPERAÇÃO
+     ESCOLHER AULA
   ========================================= */
 
-  function chooseOperation(selectedOperation) {
+  function startLesson(type) {
 
-    operation = selectedOperation;
+    operation = type;
 
     lessonStep = 1;
 
-    hideScreens();
+    hideAllScreens();
 
     lesson.classList.remove("hidden");
 
@@ -159,26 +174,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================
-     AULA
+     RENDERIZAR AULA
   ========================================= */
 
   function renderLesson() {
 
-    const title =
-      document.getElementById("lessonTitle");
-
-    const text =
-      document.getElementById("lessonText");
-
-    const content =
-      document.getElementById("lessonContent");
-
-    const step =
-      document.getElementById("lessonStep");
-
-    const next =
-      document.getElementById("lessonNextBtn");
-
+    const title = document.getElementById("lessonTitle");
+    const text = document.getElementById("lessonText");
+    const content = document.getElementById("lessonContent");
+    const step = document.getElementById("lessonStep");
+    const next = document.getElementById("lessonNextBtn");
 
     step.textContent = lessonStep;
 
@@ -191,33 +196,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (lessonStep === 1) {
 
-        title.textContent =
-          "O que é adição? ➕";
+        title.textContent = "O que é adição? ➕";
 
         text.textContent =
-          "Adicionar significa juntar.";
+          "Adicionar significa juntar quantidades.";
 
         content.innerHTML = `
-
           <h2>Vamos aprender!</h2>
 
           <p>
             Quando fazemos uma adição,
             estamos <strong>juntando</strong>
-            duas ou mais quantidades.
+            quantidades.
           </p>
 
           <div class="lesson-objects">
-
             <span class="object">🍎</span>
             <span class="object">🍎</span>
             <span class="object">🍎</span>
 
-            <span class="object">+</span>
+            <span class="object">➕</span>
 
             <span class="object">🍎</span>
             <span class="object">🍎</span>
-
           </div>
 
           <p>
@@ -229,32 +230,30 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
 
           <p>
-            Portanto, juntando 3 com 2,
-            temos <strong>5</strong>.
+            Portanto, temos <strong>5 maçãs</strong>.
           </p>
-
         `;
 
-        next.textContent =
-          "Continuar →";
+        next.textContent = "Continuar →";
 
         speak(
           "Vamos aprender adição. " +
-          "Adicionar significa juntar quantidades."
+          "Adicionar significa juntar quantidades. " +
+          "Três mais dois é igual a cinco."
         );
 
+        return;
       }
 
-      else if (lessonStep === 2) {
 
-        title.textContent =
-          "Podemos contar! 🔢";
+      if (lessonStep === 2) {
+
+        title.textContent = "Vamos contar! 🔢";
 
         text.textContent =
-          "Vamos usar a contagem para fazer a conta.";
+          "Podemos usar a contagem para fazer uma adição.";
 
         content.innerHTML = `
-
           <h2>Exemplo: 5 + 3</h2>
 
           <div class="lesson-example">
@@ -296,30 +295,28 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="lesson-example">
             5 + 3 = 8
           </div>
-
         `;
 
-        next.textContent =
-          "Continuar →";
+        next.textContent = "Continuar →";
 
         speak(
           "Começamos no cinco. " +
-          "Depois contamos mais três: seis, sete, oito. " +
+          "Contamos mais três: seis, sete, oito. " +
           "Então cinco mais três é oito."
         );
 
+        return;
       }
 
-      else if (lessonStep === 3) {
 
-        title.textContent =
-          "Agora pense comigo! 🧠";
+      if (lessonStep === 3) {
+
+        title.textContent = "Agora pense comigo! 🧠";
 
         text.textContent =
           "Vamos resolver um exemplo juntos.";
 
         content.innerHTML = `
-
           <h2>Temos 4 estrelas ⭐</h2>
 
           <div class="lesson-objects">
@@ -329,7 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <span class="object">⭐</span>
             <span class="object">⭐</span>
 
-            <span class="object">+</span>
+            <span class="object">➕</span>
 
             <span class="object">⭐</span>
             <span class="object">⭐</span>
@@ -346,18 +343,16 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
 
           <p>
-            Comece no 4 e conte mais 3:
+            Conte mais três:
             <strong>5, 6, 7</strong>.
           </p>
 
           <div class="lesson-example">
             4 + 3 = 7
           </div>
-
         `;
 
-        next.textContent =
-          "Continuar →";
+        next.textContent = "Continuar →";
 
         speak(
           "Começamos no quatro e contamos mais três. " +
@@ -365,14 +360,13 @@ document.addEventListener("DOMContentLoaded", function () {
           "Então quatro mais três é sete."
         );
 
+        return;
       }
 
-      else {
 
-        showFinalLesson();
+      showReadyLesson();
 
-      }
-
+      return;
     }
 
 
@@ -380,186 +374,172 @@ document.addEventListener("DOMContentLoaded", function () {
        SUBTRAÇÃO
     ===================================== */
 
-    else {
+    if (lessonStep === 1) {
 
-      if (lessonStep === 1) {
+      title.textContent = "O que é subtração? ➖";
 
-        title.textContent =
-          "O que é subtração? ➖";
+      text.textContent =
+        "Subtrair significa tirar uma quantidade.";
 
-        text.textContent =
-          "Subtrair significa tirar.";
+      content.innerHTML = `
+        <h2>Vamos aprender!</h2>
 
-        content.innerHTML = `
+        <p>
+          Na subtração começamos com uma quantidade
+          e <strong>tiramos</strong> uma parte.
+        </p>
 
-          <h2>Vamos aprender!</h2>
+        <div class="lesson-objects">
 
-          <p>
-            Quando fazemos uma subtração,
-            começamos com uma quantidade
-            e <strong>tiramos</strong> uma parte.
-          </p>
+          <span class="object">🍎</span>
+          <span class="object">🍎</span>
+          <span class="object">🍎</span>
+          <span class="object">🍎</span>
+          <span class="object">🍎</span>
 
-          <div class="lesson-objects">
+        </div>
 
-            <span class="object">🍎</span>
-            <span class="object">🍎</span>
-            <span class="object">🍎</span>
-            <span class="object">🍎</span>
-            <span class="object">🍎</span>
+        <p>
+          Temos 5 maçãs e tiramos 2.
+        </p>
 
-          </div>
+        <div class="lesson-example">
+          5 − 2 = 3
+        </div>
 
-          <p>
-            Temos 5 maçãs e tiramos 2.
-          </p>
+        <p>
+          Sobram <strong>3 maçãs</strong>.
+        </p>
+      `;
 
-          <div class="lesson-example">
-            5 − 2 = 3
-          </div>
+      next.textContent = "Continuar →";
 
-          <p>
-            Sobram <strong>3 maçãs</strong>.
-          </p>
+      speak(
+        "Vamos aprender subtração. " +
+        "Subtrair significa tirar. " +
+        "Cinco menos dois é igual a três."
+      );
 
-        `;
-
-        next.textContent =
-          "Continuar →";
-
-        speak(
-          "Vamos aprender subtração. " +
-          "Subtrair significa tirar uma quantidade."
-        );
-
-      }
-
-      else if (lessonStep === 2) {
-
-        title.textContent =
-          "Vamos contar para trás! 🔢";
-
-        text.textContent =
-          "Na subtração podemos voltar números.";
-
-        content.innerHTML = `
-
-          <h2>Exemplo: 8 − 3</h2>
-
-          <div class="lesson-example">
-            8 − 3
-          </div>
-
-          <div class="step-list">
-
-            <div class="step">
-              <span class="step-number">1</span>
-              <span>
-                Começamos no <strong>8</strong>.
-              </span>
-            </div>
-
-            <div class="step">
-              <span class="step-number">2</span>
-              <span>
-                Voltamos 1 = <strong>7</strong>.
-              </span>
-            </div>
-
-            <div class="step">
-              <span class="step-number">3</span>
-              <span>
-                Voltamos 1 = <strong>6</strong>.
-              </span>
-            </div>
-
-            <div class="step">
-              <span class="step-number">4</span>
-              <span>
-                Voltamos 1 = <strong>5</strong>.
-              </span>
-            </div>
-
-          </div>
-
-          <div class="lesson-example">
-            8 − 3 = 5
-          </div>
-
-        `;
-
-        next.textContent =
-          "Continuar →";
-
-        speak(
-          "Começamos no oito e voltamos três números. " +
-          "Sete, seis, cinco. " +
-          "Então oito menos três é cinco."
-        );
-
-      }
-
-      else if (lessonStep === 3) {
-
-        title.textContent =
-          "Agora vamos pensar! 🧠";
-
-        text.textContent =
-          "Veja o exemplo.";
-
-        content.innerHTML = `
-
-          <h2>Temos 7 balões 🎈</h2>
-
-          <div class="lesson-objects">
-
-            <span class="object">🎈</span>
-            <span class="object">🎈</span>
-            <span class="object">🎈</span>
-            <span class="object">🎈</span>
-            <span class="object">🎈</span>
-            <span class="object">🎈</span>
-            <span class="object">🎈</span>
-
-          </div>
-
-          <p>
-            3 balões foram embora.
-          </p>
-
-          <div class="lesson-example">
-            7 − 3 = ?
-          </div>
-
-          <p>
-            Conte três números para trás:
-            <strong>6, 5, 4</strong>.
-          </p>
-
-          <div class="lesson-example">
-            7 − 3 = 4
-          </div>
-
-        `;
-
-        next.textContent =
-          "Continuar →";
-
-        speak(
-          "Começamos no sete e voltamos três números. " +
-          "Seis, cinco, quatro. " +
-          "Então sete menos três é quatro."
-        );
-
-      }
-
-      else {
-
-        showFinalLesson();
-
-      }
-
+      return;
     }
+
+
+    if (lessonStep === 2) {
+
+      title.textContent = "Vamos contar para trás! 🔢";
+
+      text.textContent =
+        "Na subtração podemos voltar números.";
+
+      content.innerHTML = `
+        <h2>Exemplo: 8 − 3</h2>
+
+        <div class="lesson-example">
+          8 − 3
+        </div>
+
+        <div class="step-list">
+
+          <div class="step">
+            <span class="step-number">1</span>
+            <span>
+              Começamos no <strong>8</strong>.
+            </span>
+          </div>
+
+          <div class="step">
+            <span class="step-number">2</span>
+            <span>
+              Voltamos 1 = <strong>7</strong>.
+            </span>
+          </div>
+
+          <div class="step">
+            <span class="step-number">3</span>
+            <span>
+              Voltamos 1 = <strong>6</strong>.
+            </span>
+          </div>
+
+          <div class="step">
+            <span class="step-number">4</span>
+            <span>
+              Voltamos 1 = <strong>5</strong>.
+            </span>
+          </div>
+
+        </div>
+
+        <div class="lesson-example">
+          8 − 3 = 5
+        </div>
+      `;
+
+      next.textContent = "Continuar →";
+
+      speak(
+        "Começamos no oito e voltamos três números. " +
+        "Sete, seis, cinco. " +
+        "Então oito menos três é cinco."
+      );
+
+      return;
+    }
+
+
+    if (lessonStep === 3) {
+
+      title.textContent = "Agora vamos pensar! 🧠";
+
+      text.textContent =
+        "Veja como resolver.";
+
+      content.innerHTML = `
+        <h2>Temos 7 balões 🎈</h2>
+
+        <div class="lesson-objects">
+
+          <span class="object">🎈</span>
+          <span class="object">🎈</span>
+          <span class="object">🎈</span>
+          <span class="object">🎈</span>
+          <span class="object">🎈</span>
+          <span class="object">🎈</span>
+          <span class="object">🎈</span>
+
+        </div>
+
+        <p>
+          3 balões foram embora.
+        </p>
+
+        <div class="lesson-example">
+          7 − 3 = ?
+        </div>
+
+        <p>
+          Conte para trás:
+          <strong>6, 5, 4</strong>.
+        </p>
+
+        <div class="lesson-example">
+          7 − 3 = 4
+        </div>
+      `;
+
+      next.textContent = "Continuar →";
+
+      speak(
+        "Começamos no sete e voltamos três números. " +
+        "Seis, cinco, quatro. " +
+        "Então sete menos três é quatro."
+      );
+
+      return;
+    }
+
+
+    showReadyLesson();
   }
 
 
@@ -567,29 +547,19 @@ document.addEventListener("DOMContentLoaded", function () {
      ÚLTIMA PARTE DA AULA
   ========================================= */
 
-  function showFinalLesson() {
+  function showReadyLesson() {
 
-    const title =
-      document.getElementById("lessonTitle");
+    const title = document.getElementById("lessonTitle");
+    const text = document.getElementById("lessonText");
+    const content = document.getElementById("lessonContent");
+    const next = document.getElementById("lessonNextBtn");
 
-    const text =
-      document.getElementById("lessonText");
-
-    const content =
-      document.getElementById("lessonContent");
-
-    const next =
-      document.getElementById("lessonNextBtn");
-
-
-    title.textContent =
-      "Você está pronto! 🚀";
+    title.textContent = "Você está pronto! 🚀";
 
     text.textContent =
       "Agora vamos praticar juntos.";
 
     content.innerHTML = `
-
       <h2>Como vamos fazer?</h2>
 
       <div class="step-list">
@@ -597,21 +567,21 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="step">
           <span class="step-number">1</span>
           <span>
-            Você lê a conta.
+            Leia a conta.
           </span>
         </div>
 
         <div class="step">
           <span class="step-number">2</span>
           <span>
-            Você pensa na resposta.
+            Pense na resposta.
           </span>
         </div>
 
         <div class="step">
           <span class="step-number">3</span>
           <span>
-            Se precisar, pode pedir uma dica.
+            Se precisar, peça uma dica.
           </span>
         </div>
 
@@ -629,26 +599,23 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
 
       <p>
-        O mais importante não é apenas acertar.
-        É aprender <strong>como pensar</strong>.
+        O importante é aprender
+        <strong>como pensar</strong>.
       </p>
-
     `;
 
-    next.textContent =
-      "Começar exercícios 🎯";
-
+    next.textContent = "Começar exercícios 🎯";
 
     speak(
       "Você está pronto. " +
-      "Agora vamos praticar. " +
+      "Agora vamos praticar juntos. " +
       "Se precisar, eu vou ajudar você."
     );
   }
 
 
   /* =========================================
-     PRÓXIMO PASSO
+     PRÓXIMA ETAPA
   ========================================= */
 
   function nextLesson() {
@@ -667,7 +634,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================
-     COMEÇAR PRÁTICA
+     PRÁTICA
   ========================================= */
 
   function startPractice() {
@@ -679,7 +646,7 @@ document.addEventListener("DOMContentLoaded", function () {
     streak = 0;
     hintLevel = 0;
 
-    hideScreens();
+    hideAllScreens();
 
     practice.classList.remove("hidden");
 
@@ -690,10 +657,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================
-     ALEATÓRIO
+     NÚMERO ALEATÓRIO
   ========================================= */
 
-  function random(min, max) {
+  function randomNumber(min, max) {
 
     return Math.floor(
       Math.random() * (max - min + 1)
@@ -702,7 +669,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================
-     GERAR CONTA
+     GERAR QUESTÃO
   ========================================= */
 
   function generateQuestion() {
@@ -720,56 +687,44 @@ document.addEventListener("DOMContentLoaded", function () {
     hintLevel = 0;
 
 
-    /*
-      A dificuldade começa pequena.
-      Conforme a criança acerta,
-      os números aumentam.
-    */
+    let maxNumber = 10;
 
-    let max;
 
-    if (correct < 2) {
+    if (correct >= 2 && correct < 5) {
+      maxNumber = 20;
+    }
 
-      max = 10;
+    if (correct >= 5 && correct < 8) {
+      maxNumber = 50;
+    }
 
-    } else if (correct < 5) {
-
-      max = 20;
-
-    } else if (correct < 8) {
-
-      max = 50;
-
-    } else {
-
-      max = 100;
+    if (correct >= 8) {
+      maxNumber = 100;
     }
 
 
-    number1 = random(1, max);
+    number1 =
+      randomNumber(1, maxNumber);
+
 
     number2 =
-      random(
+      randomNumber(
         1,
-        Math.min(10, max)
+        Math.min(10, maxNumber)
       );
 
 
-    /*
-      Evitar resultado negativo
-      no começo.
-    */
+    /* Não permitir subtração negativa */
 
     if (
       operation === "subtraction" &&
       number2 > number1
     ) {
 
-      const temp = number1;
+      const temporary = number1;
 
       number1 = number2;
-
-      number2 = temp;
+      number2 = temporary;
     }
 
 
@@ -787,42 +742,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateQuestion();
 
-    showVisual();
-
-    const feedback =
-      document.getElementById("feedback");
-
-    feedback.classList.add("hidden");
-
-
-    const input =
-      document.getElementById("answer");
-
-    input.value = "";
-
-    input.disabled = false;
-
-    input.focus();
-
+    updateVisual();
 
     updateStats();
 
 
-    if (operation === "addition") {
+    const feedback =
+      document.getElementById("feedback");
 
-      document.getElementById("practiceMessage")
-        .textContent =
-        "Pense: estamos juntando os números.";
+    if (feedback) {
+      feedback.classList.add("hidden");
+    }
+
+
+    if (answerInput) {
+
+      answerInput.value = "";
+
+      answerInput.disabled = false;
+
+      answerInput.focus();
+    }
+
+
+    const message =
+      document.getElementById("practiceMessage");
+
+
+    if (message) {
+
+      if (operation === "addition") {
+
+        message.textContent =
+          "Pense: estamos juntando os números.";
+
+      } else {
+
+        message.textContent =
+          "Pense: estamos tirando uma quantidade.";
+      }
+    }
+
+
+    if (operation === "addition") {
 
       speak(
         `Quanto é ${number1} mais ${number2}?`
       );
 
     } else {
-
-      document.getElementById("practiceMessage")
-        .textContent =
-        "Pense: estamos tirando o segundo número do primeiro.";
 
       speak(
         `Quanto é ${number1} menos ${number2}?`
@@ -832,120 +800,154 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================
-     ATUALIZAR CONTA
+     MOSTRAR QUESTÃO
   ========================================= */
 
   function updateQuestion() {
 
-    document.getElementById("questionNumber")
-      .textContent =
-      questionNumber;
+    const question =
+      document.getElementById("question");
+
+    const operationLabel =
+      document.getElementById("operationLabel");
+
+    const questionNumberElement =
+      document.getElementById("questionNumber");
+
+    const progress =
+      document.getElementById("progress");
 
 
-    document.getElementById("operationLabel")
-      .textContent =
-      operation === "addition"
-        ? "ADIÇÃO"
-        : "SUBTRAÇÃO";
+    if (operationLabel) {
 
-
-    document.getElementById("question")
-      .textContent =
-      operation === "addition"
-        ? `${number1} + ${number2} = ?`
-        : `${number1} − ${number2} = ?`;
-
-
-    const percentage =
-      (questionNumber / TOTAL_QUESTIONS) * 100;
-
-
-    document.getElementById("progress")
-      .style.width =
-      `${percentage}%`;
-  }
-
-
-  /* =========================================
-     OBJETOS VISUAIS
-  ========================================= */
-
-  function showVisual() {
-
-    const area =
-      document.getElementById("visualArea");
-
-    area.innerHTML = "";
-
-
-    if (
-      number1 <= 10 &&
-      number2 <= 10
-    ) {
-
-      for (
-        let i = 0;
-        i < number1;
-        i++
-      ) {
-
-        const item =
-          document.createElement("span");
-
-        item.className = "object";
-
-        item.textContent =
-          operation === "addition"
-            ? "🔵"
-            : "🟢";
-
-        area.appendChild(item);
-      }
-
-
-      const symbol =
-        document.createElement("span");
-
-      symbol.className = "object";
-
-      symbol.textContent =
+      operationLabel.textContent =
         operation === "addition"
-          ? "➕"
-          : "➖";
+          ? "ADIÇÃO"
+          : "SUBTRAÇÃO";
+    }
 
-      area.appendChild(symbol);
+
+    if (question) {
+
+      question.textContent =
+        operation === "addition"
+          ? `${number1} + ${number2} = ?`
+          : `${number1} − ${number2} = ?`;
+    }
 
 
-      for (
-        let i = 0;
-        i < number2;
-        i++
-      ) {
+    if (questionNumberElement) {
 
-        const item =
-          document.createElement("span");
+      questionNumberElement.textContent =
+        questionNumber;
+    }
 
-        item.className = "object";
 
-        item.textContent = "🟡";
+    if (progress) {
 
-        area.appendChild(item);
-      }
+      const percentage =
+        (questionNumber / TOTAL_QUESTIONS) * 100;
+
+      progress.style.width =
+        `${percentage}%`;
     }
   }
 
 
   /* =========================================
-     VERIFICAR
+     VISUAL DA CONTA
+  ========================================= */
+
+  function updateVisual() {
+
+    const area =
+      document.getElementById("visualArea");
+
+    if (!area) {
+      return;
+    }
+
+
+    area.innerHTML = "";
+
+
+    if (
+      number1 > 10 ||
+      number2 > 10
+    ) {
+
+      return;
+    }
+
+
+    const firstEmoji =
+      operation === "addition"
+        ? "🔵"
+        : "🟢";
+
+
+    for (
+      let i = 0;
+      i < number1;
+      i++
+    ) {
+
+      const object =
+        document.createElement("span");
+
+      object.className = "object";
+
+      object.textContent =
+        firstEmoji;
+
+      area.appendChild(object);
+    }
+
+
+    const symbol =
+      document.createElement("span");
+
+    symbol.className = "object";
+
+    symbol.textContent =
+      operation === "addition"
+        ? "➕"
+        : "➖";
+
+    area.appendChild(symbol);
+
+
+    for (
+      let i = 0;
+      i < number2;
+      i++
+    ) {
+
+      const object =
+        document.createElement("span");
+
+      object.className = "object";
+
+      object.textContent = "🟡";
+
+      area.appendChild(object);
+    }
+  }
+
+
+  /* =========================================
+     VERIFICAR RESPOSTA
   ========================================= */
 
   function checkAnswer() {
 
-    const input =
-      document.getElementById("answer");
+    if (!answerInput) {
+      return;
+    }
+
 
     const value =
-      input.value.trim();
+      answerInput.value.trim();
 
 
     if (value === "") {
@@ -954,7 +956,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "wrong",
         "💡",
         "Digite uma resposta",
-        "Digite um número para podermos verificar."
+        "Digite um número para eu verificar."
       );
 
       speak(
@@ -974,11 +976,11 @@ document.addEventListener("DOMContentLoaded", function () {
       userAnswer === correctAnswer
     ) {
 
-      correctAnswerHandler();
+      handleCorrectAnswer();
 
     } else {
 
-      wrongAnswerHandler(userAnswer);
+      handleWrongAnswer(userAnswer);
     }
   }
 
@@ -987,7 +989,7 @@ document.addEventListener("DOMContentLoaded", function () {
      ACERTO
   ========================================= */
 
-  function correctAnswerHandler() {
+  function handleCorrectAnswer() {
 
     correct++;
 
@@ -996,9 +998,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let points = 10;
 
+
     if (streak >= 3) {
       points = 15;
     }
+
 
     score += points;
 
@@ -1008,15 +1012,13 @@ document.addEventListener("DOMContentLoaded", function () {
       "🎉",
       "Muito bem! Você acertou!",
       `
-        <div>
-          <strong>
-            ${number1}
-            ${operation === "addition" ? "+" : "−"}
-            ${number2}
-            =
-            ${correctAnswer}
-          </strong>
-        </div>
+        <p>
+          ${number1}
+          ${operation === "addition" ? "+" : "−"}
+          ${number2}
+          =
+          <strong>${correctAnswer}</strong>
+        </p>
 
         <p>
           Você ganhou ${points} pontos! ⭐
@@ -1025,11 +1027,17 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 
-    document.getElementById("practiceMessage")
-      .textContent =
-      streak >= 3
-        ? "Você está mandando muito bem! 🔥"
-        : "Muito bem! Você pensou direitinho! 👏";
+    const message =
+      document.getElementById("practiceMessage");
+
+
+    if (message) {
+
+      message.textContent =
+        streak >= 3
+          ? "Você está mandando muito bem! 🔥"
+          : "Muito bem! Você acertou! 👏";
+    }
 
 
     speak(
@@ -1039,6 +1047,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     updateStats();
+
+
+    if (answerInput) {
+      answerInput.disabled = true;
+    }
 
 
     setTimeout(function () {
@@ -1053,63 +1066,4 @@ document.addEventListener("DOMContentLoaded", function () {
      ERRO
   ========================================= */
 
-  function wrongAnswerHandler(userAnswer) {
-
-    wrong++;
-
-    streak = 0;
-
-    hintLevel = 1;
-
-
-    const symbol =
-      operation === "addition"
-        ? "+"
-        : "−";
-
-
-    let explanation = "";
-
-
-    if (operation === "addition") {
-
-      explanation = `
-
-        <p>
-          Você respondeu
-          <strong>${userAnswer}</strong>.
-        </p>
-
-        <p>
-          Vamos devagar.
-        </p>
-
-        <p>
-          Começamos no
-          <strong>${number1}</strong>
-          e contamos mais
-          <strong>${number2}</strong>.
-        </p>
-
-        ${createCountingSteps(
-          number1,
-          number2,
-          true
-        )}
-
-        <p>
-          Portanto:
-          <strong>
-            ${number1}
-            +
-            ${number2}
-            =
-            ${correctAnswer}
-          </strong>
-        </p>
-
-      `;
-
-    } else {
-
-      explanat
+  function h
