@@ -520,4 +520,867 @@ document.addEventListener("DOMContentLoaded", function () {
   function nextLesson() {
     if (lessonStep < 4) {
       lessonStep++;
-      render
+      renderLesson();
+    } else {
+      startPractice();
+    }
+  }
+
+  // =====================================================
+  // PRÁTICA
+  // =====================================================
+
+  function startPractice() {
+    questionNumber = 0;
+    correct = 0;
+    wrong = 0;
+    score = 0;
+    streak = 0;
+    hintLevel = 0;
+    waitingNextQuestion = false;
+
+    hideScreens();
+    practice.classList.remove("hidden");
+
+    updateStats();
+    generateQuestion();
+  }
+
+  // =====================================================
+  // ALEATÓRIO
+  // =====================================================
+
+  function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // =====================================================
+  // GERAR QUESTÃO
+  // =====================================================
+
+  function generateQuestion() {
+    if (questionNumber >= TOTAL_QUESTIONS) {
+      finishPractice();
+      return;
+    }
+
+    waitingNextQuestion = false;
+    questionNumber++;
+    hintLevel = 0;
+
+    let max;
+
+    if (correct < 2) {
+      max = 10;
+    } else if (correct < 5) {
+      max = 20;
+    } else if (correct < 8) {
+      max = 50;
+    } else {
+      max = 100;
+    }
+
+    number1 = random(1, max);
+
+    if (operation === "addition") {
+      number2 = random(1, Math.min(10, max));
+      correctAnswer = number1 + number2;
+    } else {
+      number2 = random(1, Math.min(10, number1));
+      correctAnswer = number1 - number2;
+    }
+
+    updateQuestion();
+    showVisual();
+    resetFeedback();
+    resetAnswer();
+    updateStats();
+
+    const message = document.getElementById("practiceMessage");
+
+    if (message) {
+      if (operation === "addition") {
+        message.textContent =
+          "Pense: estamos juntando os números.";
+      } else {
+        message.textContent =
+          "Pense: estamos tirando o segundo número do primeiro.";
+      }
+    }
+
+    if (operation === "addition") {
+      speak(`Quanto é ${number1} mais ${number2}?`);
+    } else {
+      speak(`Quanto é ${number1} menos ${number2}?`);
+    }
+  }
+
+  // =====================================================
+  // ATUALIZAR QUESTÃO
+  // =====================================================
+
+  function updateQuestion() {
+    const questionNumberElement =
+      document.getElementById("questionNumber");
+
+    const operationLabel =
+      document.getElementById("operationLabel");
+
+    const question =
+      document.getElementById("question");
+
+    const progress =
+      document.getElementById("progress");
+
+    if (questionNumberElement) {
+      questionNumberElement.textContent = questionNumber;
+    }
+
+    if (operationLabel) {
+      operationLabel.textContent =
+        operation === "addition" ? "ADIÇÃO" : "SUBTRAÇÃO";
+    }
+
+    if (question) {
+      question.textContent =
+        operation === "addition"
+          ? `${number1} + ${number2} = ?`
+          : `${number1} − ${number2} = ?`;
+    }
+
+    if (progress) {
+      const percentage =
+        (questionNumber / TOTAL_QUESTIONS) * 100;
+
+      progress.style.width = `${percentage}%`;
+    }
+  }
+
+  // =====================================================
+  // VISUAL
+  // =====================================================
+
+  function showVisual() {
+    const area = document.getElementById("visualArea");
+
+    if (!area) return;
+
+    area.innerHTML = "";
+
+    if (number1 <= 10 && number2 <= 10) {
+      for (let i = 0; i < number1; i++) {
+        const item = document.createElement("span");
+        item.className = "object";
+        item.textContent =
+          operation === "addition" ? "🔵" : "🟢";
+        area.appendChild(item);
+      }
+
+      const symbol = document.createElement("span");
+      symbol.className = "object";
+      symbol.textContent =
+        operation === "addition" ? "➕" : "➖";
+      area.appendChild(symbol);
+
+      for (let i = 0; i < number2; i++) {
+        const item = document.createElement("span");
+        item.className = "object";
+        item.textContent = "🟡";
+        area.appendChild(item);
+      }
+    }
+  }
+
+  // =====================================================
+  // RESETAR RESPOSTA
+  // =====================================================
+
+  function resetAnswer() {
+    const input = document.getElementById("answer");
+    const button = document.getElementById("answerBtn");
+
+    if (input) {
+      input.value = "";
+      input.disabled = false;
+
+      setTimeout(function () {
+        try {
+          input.focus();
+        } catch (e) {}
+      }, 50);
+    }
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Verificar resposta ✓";
+    }
+  }
+
+  // =====================================================
+  // RESETAR FEEDBACK
+  // =====================================================
+
+  function resetFeedback() {
+    const feedback = document.getElementById("feedback");
+
+    if (feedback) {
+      feedback.classList.add("hidden");
+    }
+  }
+
+  // =====================================================
+  // VERIFICAR RESPOSTA
+  // =====================================================
+
+  function checkAnswer() {
+    if (waitingNextQuestion) return;
+
+    const input = document.getElementById("answer");
+
+    if (!input) return;
+
+    const value = input.value.trim();
+
+    if (value === "") {
+      showFeedback(
+        "wrong",
+        "💡",
+        "Digite uma resposta",
+        "<p>Digite um número para podermos verificar.</p>"
+      );
+
+      speak("Digite uma resposta primeiro.");
+      input.focus();
+
+      return;
+    }
+
+    const userAnswer = Number(value);
+
+    if (
+      Number.isFinite(userAnswer) &&
+      userAnswer === correctAnswer
+    ) {
+      handleCorrectAnswer();
+    } else {
+      handleWrongAnswer(userAnswer);
+    }
+  }
+
+  // =====================================================
+  // ACERTO
+  // =====================================================
+
+  function handleCorrectAnswer() {
+    correct++;
+    streak++;
+
+    const points = streak >= 3 ? 15 : 10;
+    score += points;
+
+    showFeedback(
+      "correct",
+      "🎉",
+      "Muito bem! Você acertou!",
+      `
+        <p>
+          <strong>
+            ${number1}
+            ${operation === "addition" ? "+" : "−"}
+            ${number2}
+            =
+            ${correctAnswer}
+          </strong>
+        </p>
+
+        <p>
+          Você ganhou ${points} pontos! ⭐
+        </p>
+      `
+    );
+
+    const message = document.getElementById("practiceMessage");
+
+    if (message) {
+      message.textContent =
+        streak >= 3
+          ? "Você está mandando muito bem! 🔥"
+          : "Muito bem! Você pensou direitinho! 👏";
+    }
+
+    speak(
+      `Muito bem! Você acertou. ` +
+      `A resposta é ${correctAnswer}.`
+    );
+
+    updateStats();
+
+    waitingNextQuestion = true;
+
+    const input = document.getElementById("answer");
+    const button = document.getElementById("answerBtn");
+
+    if (input) input.disabled = true;
+    if (button) button.disabled = true;
+
+    setTimeout(function () {
+      generateQuestion();
+    }, 1600);
+  }
+
+  // =====================================================
+  // ERRO
+  // =====================================================
+
+  function handleWrongAnswer(userAnswer) {
+    wrong++;
+    streak = 0;
+    hintLevel = 1;
+
+    let explanation = "";
+
+    if (operation === "addition") {
+      explanation = `
+        <p>
+          Você respondeu <strong>${userAnswer}</strong>.
+        </p>
+
+        <p>
+          Vamos pensar juntos.
+        </p>
+
+        <p>
+          Começamos no <strong>${number1}</strong>
+          e contamos mais <strong>${number2}</strong>.
+        </p>
+
+        ${createCountingSteps(number1, number2, true)}
+
+        <p>
+          Portanto:
+          <strong>
+            ${number1} + ${number2} = ${correctAnswer}
+          </strong>
+        </p>
+      `;
+    } else {
+      explanation = `
+        <p>
+          Você respondeu <strong>${userAnswer}</strong>.
+        </p>
+
+        <p>
+          Vamos pensar juntos.
+        </p>
+
+        <p>
+          Começamos no <strong>${number1}</strong>
+          e voltamos <strong>${number2}</strong>.
+        </p>
+
+        ${createCountingSteps(number1, number2, false)}
+
+        <p>
+          Portanto:
+          <strong>
+            ${number1} − ${number2} = ${correctAnswer}
+          </strong>
+        </p>
+      `;
+    }
+
+    showFeedback(
+      "wrong",
+      "💡",
+      "Quase! Vamos aprender juntos.",
+      explanation
+    );
+
+    const message = document.getElementById("practiceMessage");
+
+    if (message) {
+      message.textContent =
+        "Não tem problema errar. Vamos entender juntos! 💪";
+    }
+
+    speak(
+      `Não tem problema. Vamos aprender. ` +
+      `A resposta correta é ${correctAnswer}.`
+    );
+
+    updateStats();
+  }
+
+  // =====================================================
+  // PASSOS DE CONTAGEM
+  // =====================================================
+
+  function createCountingSteps(start, amount, adding) {
+    let html = '<div class="step-list">';
+
+    let current = start;
+
+    for (let i = 1; i <= amount; i++) {
+      current = adding ? current + 1 : current - 1;
+
+      html += `
+        <div class="step">
+          <span class="step-number">${i}</span>
+          <span>
+            ${adding ? "Mais" : "Menos"} 1 =
+            <strong>${current}</strong>
+          </span>
+        </div>
+      `;
+    }
+
+    html += "</div>";
+
+    return html;
+  }
+
+  // =====================================================
+  // FEEDBACK
+  // =====================================================
+
+  function showFeedback(type, icon, title, text) {
+    const feedback = document.getElementById("feedback");
+    const feedbackIcon = document.getElementById("feedbackIcon");
+    const feedbackTitle = document.getElementById("feedbackTitle");
+    const feedbackText = document.getElementById("feedbackText");
+
+    if (!feedback) return;
+
+    feedback.classList.remove("hidden");
+
+    if (feedbackIcon) {
+      feedbackIcon.textContent = icon;
+    }
+
+    if (feedbackTitle) {
+      feedbackTitle.textContent = title;
+    }
+
+    if (feedbackText) {
+      feedbackText.innerHTML = text;
+    }
+
+    feedback.classList.remove("feedback-correct");
+    feedback.classList.remove("feedback-wrong");
+
+    if (type === "correct") {
+      feedback.classList.add("feedback-correct");
+    } else {
+      feedback.classList.add("feedback-wrong");
+    }
+  }
+
+  // =====================================================
+  // DICA
+  // =====================================================
+
+  function giveHint() {
+    if (waitingNextQuestion) return;
+
+    hintLevel++;
+
+    let text = "";
+
+    if (operation === "addition") {
+      if (hintLevel === 1) {
+        text = `
+          <p>
+            💡 Comece no <strong>${number1}</strong>
+            e conte mais <strong>${number2}</strong>.
+          </p>
+        `;
+
+        speak(
+          `Comece no ${number1} e conte mais ${number2}.`
+        );
+      } else if (hintLevel === 2) {
+        text = `
+          <p>
+            Conte assim:
+            <strong>${getCountingText(number1, number2, true)}</strong>
+          </p>
+        `;
+
+        speak(
+          `Conte: ${getCountingSpeech(number1, number2, true)}.`
+        );
+      } else {
+        text = `
+          <p>
+            🔎 A resposta está bem perto!
+          </p>
+
+          <p>
+            <strong>${number1} + ${number2} = ${correctAnswer}</strong>
+          </p>
+        `;
+
+        speak(`A resposta é ${correctAnswer}.`);
+      }
+    } else {
+      if (hintLevel === 1) {
+        text = `
+          <p>
+            💡 Comece no <strong>${number1}</strong>
+            e volte <strong>${number2}</strong> números.
+          </p>
+        `;
+
+        speak(
+          `Comece no ${number1} e volte ${number2} números.`
+        );
+      } else if (hintLevel === 2) {
+        text = `
+          <p>
+            Conte para trás:
+            <strong>${getCountingText(number1, number2, false)}</strong>
+          </p>
+        `;
+
+        speak(
+          `Conte para trás: ${getCountingSpeech(number1, number2, false)}.`
+        );
+      } else {
+        text = `
+          <p>
+            🔎 Vamos conferir juntos:
+          </p>
+
+          <p>
+            <strong>${number1} − ${number2} = ${correctAnswer}</strong>
+          </p>
+        `;
+
+        speak(`A resposta é ${correctAnswer}.`);
+      }
+    }
+
+    showFeedback(
+      "wrong",
+      "💡",
+      "Dica do Professor",
+      text
+    );
+  }
+
+  // =====================================================
+  // TEXTO DE CONTAGEM
+  // =====================================================
+
+  function getCountingText(start, amount, adding) {
+    const numbers = [];
+    let current = start;
+
+    for (let i = 0; i < amount; i++) {
+      current = adding ? current + 1 : current - 1;
+      numbers.push(current);
+    }
+
+    return numbers.join(", ");
+  }
+
+  function getCountingSpeech(start, amount, adding) {
+    return getCountingText(start, amount, adding)
+      .replace(/, /g, ", ");
+  }
+
+  // =====================================================
+  // EXPLICAR
+  // =====================================================
+
+  function explainQuestion() {
+    if (waitingNextQuestion) return;
+
+    let text = "";
+
+    if (operation === "addition") {
+      text = `
+        <p>
+          ➕ Na adição, nós <strong>juntamos</strong>.
+        </p>
+
+        <p>
+          Temos ${number1} e juntamos mais ${number2}.
+        </p>
+
+        ${createCountingSteps(number1, number2, true)}
+
+        <div class="lesson-example">
+          ${number1} + ${number2} = ${correctAnswer}
+        </div>
+      `;
+
+      speak(
+        `Na adição nós juntamos. ` +
+        `Começamos no ${number1} e contamos mais ${number2}. ` +
+        `A resposta é ${correctAnswer}.`
+      );
+    } else {
+      text = `
+        <p>
+          ➖ Na subtração, nós <strong>tiramos</strong>.
+        </p>
+
+        <p>
+          Temos ${number1} e tiramos ${number2}.
+        </p>
+
+        ${createCountingSteps(number1, number2, false)}
+
+        <div class="lesson-example">
+          ${number1} − ${number2} = ${correctAnswer}
+        </div>
+      `;
+
+      speak(
+        `Na subtração nós tiramos. ` +
+        `Começamos no ${number1} e voltamos ${number2}. ` +
+        `A resposta é ${correctAnswer}.`
+      );
+    }
+
+    showFeedback(
+      "wrong",
+      "🧑‍🏫",
+      "Vamos aprender!",
+      text
+    );
+  }
+
+  // =====================================================
+  // ESTATÍSTICAS
+  // =====================================================
+
+  function updateStats() {
+    const scoreElement = document.getElementById("score");
+    const correctElement = document.getElementById("correct");
+    const wrongElement = document.getElementById("wrong");
+    const accuracyElement = document.getElementById("accuracy");
+    const streakElement = document.getElementById("streak");
+
+    if (scoreElement) {
+      scoreElement.textContent = score;
+    }
+
+    if (correctElement) {
+      correctElement.textContent = correct;
+    }
+
+    if (wrongElement) {
+      wrongElement.textContent = wrong;
+    }
+
+    if (streakElement) {
+      streakElement.textContent = streak;
+    }
+
+    if (accuracyElement) {
+      const attempts = correct + wrong;
+
+      const accuracy =
+        attempts === 0
+          ? 0
+          : Math.round((correct / attempts) * 100);
+
+      accuracyElement.textContent = `${accuracy}%`;
+    }
+  }
+
+  // =====================================================
+  // FINALIZAR
+  // =====================================================
+
+  function finishPractice() {
+    waitingNextQuestion = true;
+    stopSpeech();
+
+    hideScreens();
+    result.classList.remove("hidden");
+
+    const accuracy =
+      correct + wrong === 0
+        ? 0
+        : Math.round((correct / (correct + wrong)) * 100);
+
+    const finalScore =
+      document.getElementById("finalScore");
+
+    const finalCorrect =
+      document.getElementById("finalCorrect");
+
+    const finalWrong =
+      document.getElementById("finalWrong");
+
+    const finalAccuracy =
+      document.getElementById("finalAccuracy");
+
+    const resultTitle =
+      document.getElementById("resultTitle");
+
+    const resultText =
+      document.getElementById("resultText");
+
+    const resultEmoji =
+      document.getElementById("resultEmoji");
+
+    const resultMessage =
+      document.getElementById("resultMessage");
+
+    if (finalScore) {
+      finalScore.textContent = score;
+    }
+
+    if (finalCorrect) {
+      finalCorrect.textContent = correct;
+    }
+
+    if (finalWrong) {
+      finalWrong.textContent = wrong;
+    }
+
+    if (finalAccuracy) {
+      finalAccuracy.textContent = `${accuracy}%`;
+    }
+
+    if (accuracy >= 90) {
+      if (resultEmoji) resultEmoji.textContent = "🏆";
+      if (resultTitle) resultTitle.textContent = "Incrível!";
+      if (resultText) {
+        resultText.textContent =
+          "Você mostrou que sabe muito de matemática!";
+      }
+      if (resultMessage) {
+        resultMessage.innerHTML =
+          "Você está pronto para um desafio ainda maior! 🌟";
+      }
+    } else if (accuracy >= 70) {
+      if (resultEmoji) resultEmoji.textContent = "🎉";
+      if (resultTitle) resultTitle.textContent = "Muito bem!";
+      if (resultText) {
+        resultText.textContent =
+          "Você está aprendendo muito bem!";
+      }
+      if (resultMessage) {
+        resultMessage.innerHTML =
+          "Continue praticando e você ficará ainda melhor! 💪";
+      }
+    } else {
+      if (resultEmoji) resultEmoji.textContent = "🌱";
+      if (resultTitle) resultTitle.textContent = "Boa tentativa!";
+      if (resultText) {
+        resultText.textContent =
+          "Errar também faz parte de aprender.";
+      }
+      if (resultMessage) {
+        resultMessage.innerHTML =
+          "Vamos praticar mais um pouco. O Professor Math está aqui para ajudar! 🧑‍🏫";
+      }
+    }
+
+    speak(
+      `Você terminou. ` +
+      `Acertou ${correct} de ${TOTAL_QUESTIONS}. ` +
+      `Sua precisão foi de ${accuracy} por cento. ` +
+      `Você fez ${score} pontos.`
+    );
+  }
+
+  // =====================================================
+  // EVENTOS DOS BOTÕES
+  // =====================================================
+
+  if (soundBtn) {
+    soundBtn.addEventListener("click", toggleSound);
+  }
+
+  if (additionBtn) {
+    additionBtn.addEventListener("click", function () {
+      chooseOperation("addition");
+    });
+  }
+
+  if (subtractionBtn) {
+    subtractionBtn.addEventListener("click", function () {
+      chooseOperation("subtraction");
+    });
+  }
+
+  if (lessonBackBtn) {
+    lessonBackBtn.addEventListener("click", function () {
+      goHome();
+    });
+  }
+
+  if (lessonNextBtn) {
+    lessonNextBtn.addEventListener("click", function () {
+      nextLesson();
+    });
+  }
+
+  if (practiceBackBtn) {
+    practiceBackBtn.addEventListener("click", function () {
+      stopSpeech();
+      waitingNextQuestion = false;
+      goHome();
+    });
+  }
+
+  if (answerBtn) {
+    answerBtn.addEventListener("click", function () {
+      checkAnswer();
+    });
+  }
+
+  if (hintBtn) {
+    hintBtn.addEventListener("click", function () {
+      giveHint();
+    });
+  }
+
+  if (explainBtn) {
+    explainBtn.addEventListener("click", function () {
+      explainQuestion();
+    });
+  }
+
+  if (restartBtn) {
+    restartBtn.addEventListener("click", function () {
+      startPractice();
+    });
+  }
+
+  if (homeBtn) {
+    homeBtn.addEventListener("click", function () {
+      goHome();
+    });
+  }
+
+  // =====================================================
+  // ENTER PARA RESPONDER
+  // =====================================================
+
+  const answerInput = document.getElementById("answer");
+
+  if (answerInput) {
+    answerInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        checkAnswer();
+      }
+    });
+  }
+
+  // =====================================================
+  // INÍCIO
+  // =====================================================
+
+  hideScreens();
+  home.classList.remove("hidden");
+
+  console.log("Professor Math carregado com sucesso.");
+});
