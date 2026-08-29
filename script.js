@@ -1,4 +1,3 @@
-Fechado. Aqui está o script.js completo, já com a professora falando de um jeito mais casual e natural nas duas operações, sem remover as funções que você já tinha.
 /* Professor Math - aula visual para crianças que ainda não sabem ler */
 "use strict";
 
@@ -21,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let soundEnabled = true;
   let waitingNextQuestion = false;
+  let teacherExplaining = false;
 
   const $ = (id) => document.getElementById(id);
 
@@ -38,22 +38,37 @@ document.addEventListener("DOMContentLoaded", function () {
    * =====================================================
    * VOZ DA PROFESSORA
    * =====================================================
-   *
-   * A fala foi deixada mais natural e casual,
-   * como uma professora explicando em casa.
    */
 
-  function speak(text) {
-    if (!soundEnabled || !("speechSynthesis" in window)) return;
+  function speak(text, onEnd) {
+    if (!soundEnabled || !("speechSynthesis" in window)) {
+      if (typeof onEnd === "function") {
+        onEnd();
+      }
+      return;
+    }
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance =
+      new SpeechSynthesisUtterance(text);
 
     utterance.lang = "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1.08;
     utterance.volume = 1;
+
+    utterance.onend = function () {
+      if (typeof onEnd === "function") {
+        onEnd();
+      }
+    };
+
+    utterance.onerror = function () {
+      if (typeof onEnd === "function") {
+        onEnd();
+      }
+    };
 
     window.speechSynthesis.speak(utterance);
   }
@@ -68,11 +83,17 @@ document.addEventListener("DOMContentLoaded", function () {
     soundEnabled = !soundEnabled;
 
     if (soundBtn()) {
-      soundBtn().textContent = soundEnabled ? "🔊" : "🔇";
+      soundBtn().textContent =
+        soundEnabled ? "🔊" : "🔇";
     }
 
     if (!soundEnabled) {
       stopSpeech();
+
+      if (teacherExplaining) {
+        teacherExplaining = false;
+        unlockAnswer();
+      }
     } else {
       speak(
         "Pronto! Minha voz voltou. Bora continuar?"
@@ -85,15 +106,21 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function hideScreens() {
-    [home, lesson, practice, result].forEach(function (screen) {
-      screen.classList.add("hidden");
-    });
+    [home, lesson, practice, result].forEach(
+      function (screen) {
+        screen.classList.add("hidden");
+      }
+    );
   }
 
   function goHome() {
     stopSpeech();
+
+    teacherExplaining = false;
     waitingNextQuestion = false;
+
     hideScreens();
+
     home.classList.remove("hidden");
   }
 
@@ -102,6 +129,9 @@ document.addEventListener("DOMContentLoaded", function () {
     lessonStep = 1;
 
     stopSpeech();
+
+    teacherExplaining = false;
+
     hideScreens();
 
     lesson.classList.remove("hidden");
@@ -123,7 +153,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const next = $("lessonNextBtn");
 
     if (!title || !text || !content || !step || !next) {
-      console.error("Professor Math: elementos da aula não encontrados.");
+      console.error(
+        "Professor Math: elementos da aula não encontrados."
+      );
       return;
     }
 
@@ -135,9 +167,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (operation === "addition") {
-      renderAdditionLesson(title, text, content, next);
+      renderAdditionLesson(
+        title,
+        text,
+        content,
+        next
+      );
     } else {
-      renderSubtractionLesson(title, text, content, next);
+      renderSubtractionLesson(
+        title,
+        text,
+        content,
+        next
+      );
     }
   }
 
@@ -147,7 +189,12 @@ document.addEventListener("DOMContentLoaded", function () {
    * =====================================================
    */
 
-  function renderAdditionLesson(title, text, content, next) {
+  function renderAdditionLesson(
+    title,
+    text,
+    content,
+    next
+  ) {
     if (lessonStep === 1) {
       title.textContent = "➕ JUNTAR";
 
@@ -390,7 +437,12 @@ document.addEventListener("DOMContentLoaded", function () {
    * =====================================================
    */
 
-  function renderSubtractionLesson(title, text, content, next) {
+  function renderSubtractionLesson(
+    title,
+    text,
+    content,
+    next
+  ) {
     if (lessonStep === 1) {
       title.textContent = "➖ TIRAR";
 
@@ -641,13 +693,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const next = $("lessonNextBtn");
     const step = $("lessonStep");
 
-    if (!title || !text || !content || !next) return;
+    if (!title || !text || !content || !next) {
+      return;
+    }
 
     if (step) {
       step.textContent = "4";
     }
 
-    title.textContent = "🚀 AGORA É SUA VEZ!";
+    title.textContent =
+      "🚀 AGORA É SUA VEZ!";
 
     text.textContent =
       "Bora tentar umas continhas?";
@@ -705,7 +760,8 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
     `;
 
-    next.textContent = "Começar exercícios 🎯";
+    next.textContent =
+      "Começar exercícios 🎯";
 
     speak(
       "Pronto! Agora é sua vez. " +
@@ -738,7 +794,9 @@ document.addEventListener("DOMContentLoaded", function () {
     score = 0;
     streak = 0;
     hintLevel = 0;
+
     waitingNextQuestion = false;
+    teacherExplaining = false;
 
     hideScreens();
 
@@ -751,7 +809,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function random(min, max) {
     return Math.floor(
-      Math.random() * (max - min + 1)
+      Math.random() *
+        (max - min + 1)
     ) + min;
   }
 
@@ -762,6 +821,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     waitingNextQuestion = false;
+    teacherExplaining = false;
 
     questionNumber++;
     hintLevel = 0;
@@ -813,7 +873,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateStats();
 
-    const message = $("practiceMessage");
+    const message =
+      $("practiceMessage");
 
     if (message) {
       message.textContent =
@@ -906,7 +967,6 @@ document.addEventListener("DOMContentLoaded", function () {
           document.createElement("span");
 
         item.className = "object";
-
         item.textContent =
           firstEmoji;
 
@@ -969,13 +1029,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /*
    * =====================================================
-   * RESPOSTA
+   * CONTROLE DO CAMPO DE RESPOSTA
    * =====================================================
    */
 
   function resetAnswer() {
     const input = $("answer");
     const button = $("answerBtn");
+
+    teacherExplaining = false;
 
     if (input) {
       input.value = "";
@@ -989,6 +1051,53 @@ document.addEventListener("DOMContentLoaded", function () {
       button.textContent =
         "Verificar resposta ✓";
     }
+  }
+
+  function lockAnswer() {
+    const input = $("answer");
+    const button = $("answerBtn");
+
+    teacherExplaining = true;
+
+    if (input) {
+      input.disabled = true;
+    }
+
+    if (button) {
+      button.disabled = true;
+    }
+  }
+
+  function unlockAnswer() {
+    const input = $("answer");
+    const button = $("answerBtn");
+
+    teacherExplaining = false;
+
+    if (input) {
+      input.disabled = false;
+      input.focus();
+    }
+
+    if (button) {
+      button.disabled = false;
+
+      button.textContent =
+        "Verificar resposta ✓";
+    }
+  }
+
+  /*
+   * Bloqueia enquanto a professora fala
+   * e libera somente quando ela termina.
+   */
+
+  function teacherExplain(text) {
+    lockAnswer();
+
+    speak(text, function () {
+      unlockAnswer();
+    });
   }
 
   function resetFeedback() {
@@ -1094,8 +1203,17 @@ document.addEventListener("DOMContentLoaded", function () {
     return html;
   }
 
+  /*
+   * =====================================================
+   * RESPOSTA
+   * =====================================================
+   */
+
   function checkAnswer() {
-    if (waitingNextQuestion) {
+    if (
+      waitingNextQuestion ||
+      teacherExplaining
+    ) {
       return;
     }
 
@@ -1117,6 +1235,7 @@ document.addEventListener("DOMContentLoaded", function () {
             text-align:center;
             font-size:1.3rem;
           ">
+
             <div style="
               font-size:4rem;
               margin-bottom:15px;
@@ -1127,6 +1246,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <p>
               Coloca um número aí.
             </p>
+
           </div>
         `
       );
@@ -1190,7 +1310,9 @@ document.addEventListener("DOMContentLoaded", function () {
             font-size:2rem;
           ">
             ${number1}
-            ${operation === "addition" ? "+" : "−"}
+            ${operation === "addition"
+              ? "+"
+              : "−"}
             ${number2}
             =
             ${correctAnswer}
@@ -1238,6 +1360,13 @@ document.addEventListener("DOMContentLoaded", function () {
    * =====================================================
    * ERRO
    * =====================================================
+   *
+   * IMPORTANTE:
+   * A resposta NÃO aparece.
+   *
+   * A professora explica primeiro.
+   * Enquanto ela fala, o campo fica bloqueado.
+   * Quando ela termina, o campo é liberado.
    */
 
   function handleWrong(userAnswer) {
@@ -1247,48 +1376,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
     hintLevel++;
 
-    const symbol =
-      operation === "addition"
-        ? "+"
-        : "−";
-
-    const steps =
-      createCountingSteps(
-        number1,
-        number2,
-        operation === "addition"
-      );
-
     showFeedback(
       "wrong",
-      "💡",
-      "VAMOS JUNTOS",
+      "🧑‍🏫",
+      "VAMOS TENTAR JUNTOS",
       `
         <div style="
           text-align:center;
         ">
 
           <div style="
-            font-size:3.5rem;
+            font-size:4rem;
+            margin-bottom:15px;
           ">
             🧑‍🏫
           </div>
 
-          <p>
-            Relaxa, acontece. Vamos fazer juntos.
+          <p style="
+            font-size:1.25rem;
+          ">
+            Relaxa, acontece!
           </p>
 
-          ${steps}
+          <p style="
+            font-size:1.2rem;
+          ">
+            Presta atenção na explicação
+            e depois tenta de novo.
+          </p>
 
-          <div class="lesson-example" style="
-            font-size:2rem;
+          <div style="
+            font-size:3rem;
             margin-top:15px;
           ">
-            ${number1}
-            ${symbol}
-            ${number2}
-            =
-            ${correctAnswer}
+            👂 🧠 💪
           </div>
 
         </div>
@@ -1300,43 +1421,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (message) {
       message.textContent =
-        "💪 Relaxa! Vamos aprender juntos.";
-    }
-
-    if (operation === "addition") {
-      speak(
-        `Relaxa, não tem problema. ` +
-        `Vamos fazer juntos. ` +
-        `Começa no ${number1}. ` +
-        `Agora conta mais ${number2}. ` +
-        `A resposta é ${correctAnswer}.`
-      );
-    } else {
-      speak(
-        `Relaxa, não tem problema. ` +
-        `Vamos fazer juntos. ` +
-        `Começa no ${number1}. ` +
-        `Agora volta ${number2} números. ` +
-        `A resposta é ${correctAnswer}.`
-      );
+        "🧑‍🏫 Presta atenção! A professora vai explicar.";
     }
 
     updateStats();
-  }
 
-  function lockAnswer() {
-    const input =
-      $("answer");
+    /*
+     * BLOQUEIA A RESPOSTA ANTES DA EXPLICAÇÃO
+     */
+    lockAnswer();
 
-    const button =
-      $("answerBtn");
-
-    if (input) {
-      input.disabled = true;
-    }
-
-    if (button) {
-      button.disabled = true;
+    if (operation === "addition") {
+      teacherExplain(
+        `Calma, vamos tentar de novo. ` +
+        `Essa é uma continha de juntar. ` +
+        `Você tem o número ${number1}. ` +
+        `Agora precisa juntar mais ${number2}. ` +
+        `Então começa no ${number1}. ` +
+        `E vai contando um por um. ` +
+        `Primeiro mais um. ` +
+        `Depois mais um. ` +
+        `E continua assim até juntar todos. ` +
+        `Agora pensa com calma e tenta novamente.`
+      );
+    } else {
+      teacherExplain(
+        `Calma, vamos tentar de novo. ` +
+        `Essa é uma continha de tirar. ` +
+        `Você começa no número ${number1}. ` +
+        `Agora precisa voltar ${number2} números. ` +
+        `Então vai voltando um por um. ` +
+        `Volta um. ` +
+        `Depois volta mais um. ` +
+        `E continua até tirar todos. ` +
+        `Agora pensa com calma e tenta novamente.`
+      );
     }
   }
 
@@ -1347,13 +1466,17 @@ document.addEventListener("DOMContentLoaded", function () {
    */
 
   function showHint() {
-    if (waitingNextQuestion) {
+    if (
+      waitingNextQuestion ||
+      teacherExplaining
+    ) {
       return;
     }
 
     hintLevel++;
 
     let text = "";
+    let speech = "";
 
     if (operation === "addition") {
       if (hintLevel === 1) {
@@ -1397,9 +1520,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
           </div>
         `;
+
+        speech =
+          `É uma adição. ` +
+          `Então bora juntar. ` +
+          `Começa no ${number1} ` +
+          `e conta mais ${number2}.`;
       } else {
-        const numbers =
-          [];
+        const numbers = [];
 
         for (
           let i = 1;
@@ -1433,15 +1561,22 @@ document.addEventListener("DOMContentLoaded", function () {
               ${numbers.join(" ➡️ ")}
             </div>
 
+            <p style="
+              margin-top:15px;
+            ">
+              Agora pensa qual número
+              vem depois da última contagem.
+            </p>
+
           </div>
         `;
-      }
 
-      speak(
-        `É uma adição. ` +
-        `Então bora juntar. ` +
-        `Começa no ${number1} e conta mais ${number2}.`
-      );
+        speech =
+          `Vamos contar juntos. ` +
+          `Começa no ${number1}. ` +
+          `Vai avançando de um em um. ` +
+          `Pensa qual número você vai alcançar.`;
+      }
     } else {
       if (hintLevel === 1) {
         text = `
@@ -1484,9 +1619,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
           </div>
         `;
+
+        speech =
+          `É uma subtração. ` +
+          `Vamos tirar. ` +
+          `Começa no ${number1} ` +
+          `e volta ${number2}.`;
       } else {
-        const numbers =
-          [];
+        const numbers = [];
 
         for (
           let i = 1;
@@ -1520,16 +1660,27 @@ document.addEventListener("DOMContentLoaded", function () {
               ${numbers.join(" ➡️ ")}
             </div>
 
+            <p style="
+              margin-top:15px;
+            ">
+              Agora pensa onde você vai chegar.
+            </p>
+
           </div>
         `;
-      }
 
-      speak(
-        `É uma subtração. ` +
-        `Vamos tirar. ` +
-        `Começa no ${number1} e volta ${number2}.`
-      );
+        speech =
+          `Vamos voltar juntos. ` +
+          `Começa no ${number1}. ` +
+          `Vai voltando de um em um. ` +
+          `Pensa onde você vai chegar.`;
+      }
     }
+
+    /*
+     * A DICA TAMBÉM BLOQUEIA O CAMPO
+     * ENQUANTO A PROFESSORA FALA.
+     */
 
     showFeedback(
       "wrong",
@@ -1537,16 +1688,23 @@ document.addEventListener("DOMContentLoaded", function () {
       "DICA DO PROFESSOR",
       text
     );
+
+    teacherExplain(speech);
   }
 
   /*
    * =====================================================
    * EXPLICAR
    * =====================================================
+   *
+   * Não mostra a resposta.
    */
 
   function explainQuestion() {
-    if (waitingNextQuestion) {
+    if (
+      waitingNextQuestion ||
+      teacherExplaining
+    ) {
       return;
     }
 
@@ -1589,6 +1747,15 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
         `;
 
+    /*
+     * IMPORTANTE:
+     * Retiramos a parte:
+     *
+     * number1 + symbol + number2 = correctAnswer
+     *
+     * para não entregar a resposta.
+     */
+
     showFeedback(
       "wrong",
       "🧑‍🏫",
@@ -1600,37 +1767,40 @@ document.addEventListener("DOMContentLoaded", function () {
           text-align:center;
           margin-top:15px;
         ">
+
           ${steps}
 
-          <div class="lesson-example" style="
-            font-size:2rem;
-            margin-top:15px;
+          <p style="
+            font-size:1.15rem;
+            margin-top:18px;
           ">
-            ${number1}
-            ${symbol}
-            ${number2}
-            =
-            ${correctAnswer}
-          </div>
+            Agora observa os passos
+            e tenta resolver sozinho.
+          </p>
+
         </div>
       `
     );
 
     if (operation === "addition") {
-      speak(
+      teacherExplain(
         `Bora resolver juntos. ` +
         `Na adição a gente junta. ` +
         `Começa no ${number1}. ` +
-        `Conta mais ${number2}. ` +
-        `E chegamos no ${correctAnswer}.`
+        `Agora vai contando mais ${number2}, ` +
+        `um por um. ` +
+        `Presta atenção nos números que aparecem. ` +
+        `Agora pensa e tenta descobrir sozinho.`
       );
     } else {
-      speak(
+      teacherExplain(
         `Bora resolver juntos. ` +
         `Na subtração a gente tira. ` +
         `Começa no ${number1}. ` +
-        `Volta ${number2}. ` +
-        `E chegamos no ${correctAnswer}.`
+        `Agora vai voltando ${number2}, ` +
+        `um por um. ` +
+        `Presta atenção nos números que aparecem. ` +
+        `Agora pensa e tenta descobrir sozinho.`
       );
     }
   }
@@ -1687,6 +1857,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function finishPractice() {
     waitingNextQuestion = true;
 
+    teacherExplaining = false;
+
     stopSpeech();
 
     hideScreens();
@@ -1699,7 +1871,9 @@ document.addEventListener("DOMContentLoaded", function () {
       correct + wrong === 0
         ? 0
         : Math.round(
-            (correct / (correct + wrong)) * 100
+            (correct /
+              (correct + wrong)) *
+              100
           );
 
     if ($("finalScore")) {
@@ -1895,7 +2069,13 @@ document.addEventListener("DOMContentLoaded", function () {
     function (event) {
       if (event.key === "Enter") {
         event.preventDefault();
-        checkAnswer();
+
+        if (
+          !teacherExplaining &&
+          !waitingNextQuestion
+        ) {
+          checkAnswer();
+        }
       }
     }
   );
