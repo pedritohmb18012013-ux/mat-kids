@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Professor Math - Aprenda Matemática</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <main class="app">
+
+    <header class="top">
+      <div class="logo">
+        <div class="logo-icon">🧮</div>
+        <div>
+          <h1>Professor Math</h1>
+          <p>Aprenda matemática brincando!</p>
+        </div>
+      </div>
+
+      <button class="sound-button" id="soundButton" onclick="toggleSound()">
+        🔊
+      </button>
+    </header>
+
+
+    <!-- MENU -->
+    <section id="menuScreen" class="screen">
+
+      <div class="teacher-card">
+
+        <div class="teacher-avatar">
+          👨‍🏫
+        </div>
+
+        <div class="speech">
+          <strong>Olá! 👋</strong>
+          <p>
+            Eu sou o Professor Math!
+            Vou ajudar você a aprender a fazer contas.
+          </p>
+        </div>
+
+      </div>
+
+
+      <h2>O que vamos aprender?</h2>
+
+      <div class="operation-buttons">
+
+        <button class="operation addition" onclick="startGame('addition')">
+          <span>➕</span>
+          <strong>Adição</strong>
+          <small>Juntar números</small>
+        </button>
+
+        <button class="operation subtraction" onclick="startGame('subtraction')">
+          <span>➖</span>
+          <strong>Subtração</strong>
+          <small>Tirar números</small>
+        </button>
+
+      </div>
+
+
+      <h2 class="level-title">Escolha seu nível</h2>
+
+      <div class="levels">
+
+        <button class="level active" data-level="1" onclick="selectLevel(1)">
+          <span>🌱</span>
+          <strong>Fácil</strong>
+          <small>Números pequenos</small>
+        </button>
+
+        <button class="level" data-level="2" onclick="selectLevel(2)">
+          <span>🚀</span>
+          <strong>Normal</strong>
+          <small>Um pouco mais difícil</small>
+        </button>
+
+        <button class="level" data-level="3" onclick="selectLevel(3)">
+          <span>🏆</span>
+          <strong>Desafio</strong>
+          <small>Vamos pensar!</small>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- JOGO -->
+    <section id="gameScreen" class="screen hidden">
+
+      <div class="game-header">
+
+        <button class="back-button" onclick="goHome()">
+          ← Voltar
+        </button>
+
+        <div class="score">
+          ⭐ <span id="score">0</span>
+        </div>
+
+      </div>
+
+
+      <div class="teacher-area">
+
+        <div class="teacher-avatar big" id="teacherAvatar">
+          👨‍🏫
+        </div>
+
+        <div class="speech game-speech">
+          <p id="teacherMessage">
+            Vamos resolver juntos!
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="progress-info">
+
+        <span>
+          Questão <b id="questionNumber">1</b>
+        </span>
+
+        <span>
+          🔥 <b id="streak">0</b>
+        </span>
+
+      </div>
+
+
+      <div class="question-card">
+
+        <div class="operation-name" id="operationName">
+          ADIÇÃO
+        </div>
+
+        <div class="question" id="question">
+          5 + 3 = ?
+        </div>
+
+        <input
+          type="number"
+          id="answer"
+          placeholder="Digite sua resposta"
+          autocomplete="off"
+        >
+
+        <button class="answer-button" onclick="checkAnswer()">
+          Responder ✓
+        </button>
+
+        <button class="hint-button" onclick="showHint()">
+          💡 Preciso de uma dica
+        </button>
+
+      </div>
+
+
+      <div id="feedback" class="feedback hidden"></div>
+
+
+      <div class="stats">
+
+        <div>
+          <strong id="correct">0</strong>
+          <span>Acertos</span>
+        </div>
+
+        <div>
+          <strong id="wrong">0</strong>
+          <span>Erros</span>
+        </div>
+
+        <div>
+          <strong id="accuracy">0%</strong>
+          <span>Precisão</span>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- FINAL -->
+    <section id="resultScreen" class="screen hidden">
+
+      <div class="result-card">
+
+        <div class="result-icon">
+          🏆
+        </div>
+
+        <h2>Parabéns!</h2>
+
+        <p id="resultMessage">
+          Você terminou a atividade!
+        </p>
+
+        <div class="final-score">
+          ⭐ <span id="finalScore">0</span>
+        </div>
+
+        <div class="result-stats">
+
+          <div>
+            <strong id="finalCorrect">0</strong>
+            <span>Acertos</span>
+          </div>
+
+          <div>
+            <strong id="finalWrong">0</strong>
+            <span>Erros</span>
+          </div>
+
+          <div>
+            <strong id="finalAccuracy">0%</strong>
+            <span>Precisão</span>
+          </div>
+
+        </div>
+
+        <button class="answer-button" onclick="restartGame()">
+          🔄 Jogar novamente
+        </button>
+
+        <button class="home-button" onclick="goHome()">
+          🏠 Menu principal
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    Professor Math • Aprender é divertido! 📚
+  </footer>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
